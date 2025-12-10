@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪纸知识学习 - 历史与经典作品</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "SimSun", serif;
+        }
+
+        body {
+            background-color: #FFF8F0;
+            background-image: url("res/paper-texture.png"); /* 纸张纹理背景 */
+            background-repeat: repeat;
+            color: #333;
+            scroll-behavior: smooth; /* 平滑滚动 */
+        }
+
+        /* 主体容器 */
+        #main {
+            width: 100%;
+            max-width: 1200px;
+            min-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* 标题样式 */
+        .page-title {
+            text-align: center;
+            margin-bottom: 60px;
+            color: #8B4513;
+            position: relative;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.2);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .page-title .divider {
+            width: 120px;
+            height: 3px;
+            background-color: #E6D8C7;
+            margin: 0 auto;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .page-title p {
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        /* 板块样式 */
+        .section {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #E6D8C7;
+            border-radius: 8px;
+            padding: 35px;
+            margin-bottom: 50px;
+            box-shadow: 0 4px 10px rgba(139, 69, 19, 0.08);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+
+        .section:hover {
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            color: #8B4513;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-left: 15px;
+            border-left: 4px solid #CD5C5C;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            bottom: -5px;
+            width: 0;
+            height: 2px;
+            background-color: #CD5C5C;
+            transition: width 0.3s ease;
+        }
+
+        .section:hover .section-title::after {
+            width: calc(100% - 15px);
+        }
+
+        /* 历史板块样式 */
+        .history-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .history-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #E6D8C7;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #CD5C5C;
+            border: 3px solid #FFF0E6;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .timeline-item:hover::before {
+            transform: scale(1.5);
+            box-shadow: 0 0 0 4px rgba(205, 92, 92, 0.2);
+        }
+
+        .timeline-period {
+            font-weight: bold;
+            color: #CD5C5C;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-period {
+            color: #8B4513;
+        }
+
+        .timeline-content {
+            line-height: 1.9;
+            margin-bottom: 10px;
+        }
+
+        /* 作品赏析板块样式 */
+        .works-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .work-card {
+            width: calc(33.333% - 20px);
+            border: 1px solid #E6D8C7;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: #FFF;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(139, 69, 19, 0.15);
+        }
+
+        .work-img {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .work-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .work-card:hover .work-img::before {
+            opacity: 1;
+        }
+
+        .work-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .work-card:hover .work-img img {
+            transform: scale(1.08);
+        }
+
+        .work-info {
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .work-card:hover .work-info {
+            background-color: #FFF8F0;
+        }
+
+        .work-title {
+            color: #8B4513;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .work-card:hover .work-title {
+            color: #CD5C5C;
+        }
+
+        .work-desc {
+            line-height: 1.7;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* 链接样式 */
+        .more-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #CD5C5C;
+            text-decoration: none;
+            border-bottom: 1px dashed #CD5C5C;
+            transition: all 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .more-link:hover {
+            color: #8B4513;
+            border-bottom: 1px solid #8B4513;
+            padding-right: 10px;
+        }
+
+        .more-link::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .more-link:hover::after {
+            right: -10px;
+            opacity: 1;
+        }
+
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: #CD5C5C;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: #8B4513;
+            transform: translateY(-5px);
+        }
+
+        /* 图片预览模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.5s ease;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 动画关键帧 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <!-- 页面标题 -->
+        <div class="page-title">
+            <h1>剪纸知识学习</h1>
+            <div class="divider"></div>
+            <p>探寻千年剪纸的历史脉络，赏析经典作品的艺术魅力</p>
+        </div>
+
+        <!-- 剪纸历史板块 -->
+        <div class="section" id="history">
+            <h2 class="section-title">一、剪纸历史渊源</h2>
+            <div class="history-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-period">远古至南北朝（起源期）</div>
+                    <div class="timeline-content">
+                        <p>剪纸的雏形可追溯至远古时期的镂空艺术，当时人们通过在兽皮、树叶上刻画图案用于祭祀。南北朝时期，纸张开始普及，真正意义上的剪纸艺术初步形成，1959年新疆吐鲁番阿斯塔那古墓出土的“对马团花”“对猴团花”剪纸，是目前发现最早的剪纸实物。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-period">隋唐时期（发展期）</div>
+                    <div class="timeline-content">
+                        <p>隋唐国力强盛，剪纸艺术得到极大发展，应用场景扩展到宗教祭祀、节日装饰、礼品点缀等。当时的剪纸题材以花卉、动物为主，风格雄浑大气，唐太宗李世民曾命人将剪纸图案用于宫殿装饰，可见其受欢迎程度。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-period">宋元时期（成熟期）</div>
+                    <div class="timeline-content">
+                        <p>宋元时期，剪纸艺术趋于成熟，出现了专业的剪纸艺人，技法更加精细，题材也更加丰富。除了传统的装饰用途，剪纸还被应用于陶瓷、印染等工艺的模板，形成了“刻纸印花”的独特工艺，推动了民间艺术的融合发展。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-period">明清时期（鼎盛期）</div>
+                    <div class="timeline-content">
+                        <p>明清是剪纸艺术的黄金时代，流派纷呈，名家辈出。剪纸从民间走向宫廷，成为贵族生活的装饰元素，同时在民间广泛流传，形成了北方粗犷豪放、南方精巧秀丽的不同风格。题材涵盖神话传说、戏曲人物、吉祥纹样等，技法上出现了套色、染色等创新形式。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-period">近现代（传承与创新期）</div>
+                    <div class="timeline-content">
+                        <p>近现代以来，剪纸被列入国家级非物质文化遗产，受到广泛保护与传承。艺术家们在传统基础上创新，将剪纸与现代设计、当代艺术相结合，使这一古老艺术焕发出新的活力，同时通过教育、展览等形式，让剪纸艺术走向更广阔的舞台。</p>
+                    </div>
+                </div>
+            </div>
+            <a href="history-detail.html" class="more-link">查看更详细的剪纸历史发展</a>
+        </div>
+
+        <!-- 经典作品赏析板块 -->
+        <div class="section" id="works">
+            <h2 class="section-title">二、经典剪纸作品赏析</h2>
+            <p>以下精选中国剪纸艺术中的经典作品，涵盖不同流派、不同题材，展现剪纸艺术的独特魅力：</p>
+
+            <div class="works-gallery">
+                <!-- 作品1：《连年有余》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/01.jpg" alt="连年有余剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《连年有余》（北方流派）</h3>
+                        <p class="work-desc">经典吉祥题材剪纸，以“莲花”和“鲤鱼”为核心元素，谐音“连年有余”，寓意生活富足、年年有余。作品采用大红纸剪制，线条粗犷有力，造型简洁夸张，体现了北方剪纸的豪放风格。</p>
+                    </div>
+                </div>
+
+                <!-- 作品2：《百鸟朝凤》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/02.jpg" alt="百鸟朝凤剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《百鸟朝凤》（南方流派）</h3>
+                        <p class="work-desc">江南剪纸的代表作，画面构图繁复而有序，以凤凰为中心，环绕百鸟，寓意吉祥和谐、尊贵繁荣。作品技法精细，线条流畅细腻，细节刻画入微，展现了南方剪纸的精巧雅致。</p>
+                    </div>
+                </div>
+
+                <!-- 作品3：《二十四节气》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/03.jpg" alt="二十四节气剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《二十四节气》（现代创新）</h3>
+                        <p class="work-desc">当代剪纸艺术家的创新作品，以二十四节气为主题，将传统节气文化与剪纸艺术结合。每幅作品对应一个节气，融入相应的自然景观和民俗活动，色彩丰富，构图新颖，兼具传统韵味与现代审美。</p>
+                    </div>
+                </div>
+
+                <!-- 作品4：《戏曲人物·穆桂英挂帅》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/04.jpg" alt="穆桂英挂帅剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《穆桂英挂帅》（陕西剪纸）</h3>
+                        <p class="work-desc">陕西剪纸的经典题材，取材于传统戏曲《穆桂英挂帅》。作品注重人物神态刻画，通过简洁的线条表现穆桂英的英气与果敢，服饰纹样采用镂空技法，层次丰富，具有强烈的艺术感染力。</p>
+                    </div>
+                </div>
+
+                <!-- 作品5：《吉祥八宝》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/05.jpg" alt="吉祥八宝剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《吉祥八宝》（藏族剪纸）</h3>
+                        <p class="work-desc">少数民族剪纸的代表作品，融合藏族文化元素，以“吉祥八宝”（法轮、法螺、宝伞等）为题材，寓意祈福消灾、吉祥如意。作品色彩鲜明，造型古朴庄重，具有独特的宗教文化内涵。</p>
+                    </div>
+                </div>
+
+                <!-- 作品6：《田园风光》 -->
+                <div class="work-card">
+                    <div class="work-img">
+                        <img src="res/works/06.jpg" alt="田园风光剪纸" class="preview-img">
+                    </div>
+                    <div class="work-info">
+                        <h3 class="work-title">《田园风光》（山东剪纸）</h3>
+                        <p class="work-desc">山东剪纸的代表作之一，以农村田园生活为题材，展现了农耕文化的质朴之美。作品构图饱满，人物、动植物造型生动可爱，线条简练而富有韵律，充满生活气息。</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="works-gallery.html" class="more-link">查看更多经典剪纸作品</a>
+        </div>
+    </div>
+
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop" title="返回顶部">↑</button>
+
+    <!-- 图片预览模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 时间线滚动动画
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            timelineItems.forEach(item => {
+                observer.observe(item);
+            });
+
+            // 返回顶部按钮
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 图片预览功能
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            const closeBtn = document.querySelector('.close');
+            const previewImgs = document.querySelectorAll('.preview-img');
+            
+            previewImgs.forEach(img => {
+                img.addEventListener('click', function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                    document.body.style.overflow = 'hidden'; // 禁止背景滚动
+                });
+            });
+            
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // 恢复背景滚动
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // 恢复背景滚动
+                }
+            });
+
+            // 作品卡片点击跳转（如果需要保留原有链接功能）
+            const workCards = document.querySelectorAll('.work-card');
+            workCards.forEach((card, index) => {
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是图片，已经处理过预览，不执行跳转
+                    if (e.target.classList.contains('preview-img')) {
+                        return;
+                    }
+                    // 否则跳转到详情页
+                    window.location.href = `work-detail${index + 1}.html`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
